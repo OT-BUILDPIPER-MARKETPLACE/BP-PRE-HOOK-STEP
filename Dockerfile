@@ -7,7 +7,6 @@ RUN apt-get update && \
         passwd \
         ca-certificates \
         curl \
-        git \
     && rm -rf /var/lib/apt/lists/*
 
 
@@ -27,7 +26,10 @@ RUN mkdir -p \
 
 
 RUN curl -fsSL https://deb.nodesource.com/setup_14.x | bash - && \
-    apt-get install -y nodejs && \
+    apt-get install -y --no-install-recommends \
+        nodejs \
+        git \
+        openssh-client && \
     npm install -g npm@6.14.18
 
 
@@ -36,7 +38,6 @@ ENV SLEEP_DURATION=5s
 
 COPY --chown=buildpiper:buildpiper build.sh /home/buildpiper/build.sh
 COPY --chown=buildpiper:buildpiper BP-BASE-SHELL-STEPS /opt/buildpiper/shell-functions/
-
 
 RUN chmod +x /home/buildpiper/build.sh && \
     chown -R buildpiper:buildpiper /bp/workspace && \
@@ -49,4 +50,5 @@ USER buildpiper
 
 WORKDIR /home/buildpiper
 
-ENTRYPOINT ["./build.sh"]
+
+ENTRYPOINT ["/home/buildpiper/build.sh"]
