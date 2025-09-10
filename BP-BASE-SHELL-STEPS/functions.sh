@@ -16,18 +16,18 @@ function getComponentName() {
 }
 
 function getBuildNumber() {
-  BUILD_NUMBER=$(jq -r .build_number < /bp/data/environment_build)
+  BUILD_NUMBER=$(jq -r .build_number < /bp/data/environment_build )
   echo "$BUILD_NUMBER"
 }
 
 function getPreHookCommand() {
-  PRE_HOOK_CMD=$(jq -r '.pre_hooks[].command' < /bp/data/environment_build)
+  PRE_HOOK_CMD=$(jq -r '.pre_hooks[].command' < /bp/data/environment_build )
   echo "$PRE_HOOK_CMD"
 }
 
 
 function getRepositoryTag() {
-  BUILD_REPOSITORY_TAG=$(jq -r .build_detail.repository.tag < /bp/data/environment_build)
+  BUILD_REPOSITORY_TAG=$(jq -r .build_detail.repository.tag < /bp/data/environment_build )
   echo "$BUILD_REPOSITORY_TAG"
 }
 
