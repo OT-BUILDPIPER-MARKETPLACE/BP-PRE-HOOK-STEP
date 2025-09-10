@@ -27,14 +27,6 @@ export PRE_HOOK_CMD=$(getPreHookCommand)
 
 #######################################################
 
-pwd
-
-ls
-
-echo $PRE_HOOK_CMD 
-echo $BUILD_NUMBER
-
-
 echo "$PRE_HOOK_CMD" | while IFS= read -r cmd; do
   if [ -n "$cmd" ]; then
     echo "Running: $cmd"
