@@ -26,8 +26,8 @@ cd "${CODEBASE_LOCATION}" || { logErrorMessage "Failed to change directory to $C
 
 echo "$PRE_HOOK_CMD" | while IFS= read -r cmd; do
   if [ -n "$cmd" ]; then
-    echo "Running: $cmd"
-    eval "$cmd" || echo " Command failed: $cmd (continuing...)"
+    logInfoMessage "Running: $cmd"
+    eval "$cmd" || logErrorMessage " Command failed: $cmd (continuing...)"
   fi
 done
 
