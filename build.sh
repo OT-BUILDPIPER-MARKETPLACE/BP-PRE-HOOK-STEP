@@ -31,6 +31,7 @@ echo "$PRE_HOOK_CMD" | while IFS= read -r cmd; do
   fi
 done
 
-
+TASK_STATUS=$?
+saveTaskStatus ${TASK_STATUS} ${ACTIVITY_SUB_TASK_CODE}
 
 
