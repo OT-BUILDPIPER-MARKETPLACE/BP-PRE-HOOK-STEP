@@ -12,7 +12,11 @@ if [ "$DEBUG" = true ]; then
   set -x
 fi
 
+CODEBASE_LOCATION="${WORKSPACE}"/"${CODEBASE_DIR}"
+logInfoMessage "I'll $INSTRUCTION_TYPE the code available at [$CODEBASE_LOCATION]"
 sleep  $SLEEP_DURATION
+
+cd "${CODEBASE_LOCATION}" || { logErrorMessage "Failed to change directory to $CODEBASE_LOCATION"; exit 1; }
 
 export BUILD_NUMBER=$(getBuildNumber)
 export PRE_HOOK_CMD=$(getPreHookCommand)
