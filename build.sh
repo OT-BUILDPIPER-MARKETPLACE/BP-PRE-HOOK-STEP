@@ -22,9 +22,6 @@ sleep  $SLEEP_DURATION
 
 cd "${CODEBASE_LOCATION}" || { logErrorMessage "Failed to change directory to $CODEBASE_LOCATION"; exit 1; }
 
-export BUILD_NUMBER=$(getBuildNumber)
-export PRE_HOOK_CMD=$(getPreHookCommand)
-
 #######################################################
 
 echo "$PRE_HOOK_CMD" | while IFS= read -r cmd; do
