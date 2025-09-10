@@ -12,6 +12,10 @@ if [ "$DEBUG" = true ]; then
   set -x
 fi
 
+export BUILD_NUMBER=$(getBuildNumber)
+export PRE_HOOK_CMD=$(getPreHookCommand)
+
+
 CODEBASE_LOCATION="${WORKSPACE}"/"${CODEBASE_DIR}"
 logInfoMessage "I'll $INSTRUCTION_TYPE the code available at [$CODEBASE_LOCATION]"
 sleep  $SLEEP_DURATION
@@ -22,8 +26,6 @@ export BUILD_NUMBER=$(getBuildNumber)
 export PRE_HOOK_CMD=$(getPreHookCommand)
 
 #######################################################
-
-
 
 pwd
 
