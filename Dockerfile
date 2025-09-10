@@ -12,8 +12,8 @@ RUN apt-get update && \
     && rm -rf /var/lib/apt/lists/*
 
 # Create buildpiper user & group (non-root)
-RUN groupadd -g 1001 buildpiper && \
-    useradd -u 1001 -g buildpiper -d /home/buildpiper -m buildpiper && \
+RUN groupadd -g 65522 buildpiper && \
+    useradd -u 65522 -g buildpiper -d /home/buildpiper -m buildpiper && \
     mkdir -p /home/buildpiper && chown -R buildpiper:buildpiper /home/buildpiper
 
 # Create required directories & assign permissions
