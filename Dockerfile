@@ -7,6 +7,7 @@ RUN apt-get update && \
         passwd \
         ca-certificates \
         curl \
+        git \
     && rm -rf /var/lib/apt/lists/*
 
 
