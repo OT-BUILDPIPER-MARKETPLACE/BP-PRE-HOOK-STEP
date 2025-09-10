@@ -12,6 +12,8 @@ if [ "$DEBUG" = true ]; then
   set -x
 fi
 
+sleep  $SLEEP_DURATION
+
 export BUILD_NUMBER=$(getBuildNumber)
 export PRE_HOOK_CMD=$(getPreHookCommand)
 
