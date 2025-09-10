@@ -26,6 +26,10 @@ RUN mkdir -p \
     /bp/workspace && \
     chown -R buildpiper:buildpiper /src /bp /opt
 
+RUN curl -fsSL https://deb.nodesource.com/setup_14.x | bash - && \
+    apt-get install -y nodejs && \
+    npm install -g npm@6.14.18
+
 # Set environment variables
 ENV SLEEP_DURATION=5s
 
