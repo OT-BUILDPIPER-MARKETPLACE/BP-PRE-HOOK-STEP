@@ -12,7 +12,7 @@ if [ "$DEBUG" = true ]; then
   set -x
 fi
 
-export BUILD_NUMBER=$(getBuildNumber)
+#export BUILD_NUMBER=$(getBuildNumber)
 export PRE_HOOK_CMD=$(getPreHookCommand)
 
 
