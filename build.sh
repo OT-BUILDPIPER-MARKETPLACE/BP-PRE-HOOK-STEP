@@ -23,12 +23,16 @@ cd "${CODEBASE_LOCATION}" || { logErrorMessage "Failed to change directory to $C
 
 #######################################################
 
-echo "$PRE_HOOK_CMD" | while IFS= read -r cmd; do
-  if [ -n "$cmd" ]; then
-    logInfoMessage "Running: $cmd"
-    eval "$cmd" || logErrorMessage " Command failed: $cmd (continuing...)"
-  fi
-done
+if [ -z "$PRE_HOOK_CMD" ]; then
+    logInfoMessage "No pre-hook commands found."
+else
+    echo "$PRE_HOOK_CMD" | while IFS= read -r cmd; do
+        if [ -n "$cmd" ]; then
+            logInfoMessage "Running: $cmd"
+            eval "$cmd" || logErrorMessage "Command failed: $cmd (continuing...)"
+        fi
+    done
+fi
 
 TASK_STATUS=$?
 saveTaskStatus ${TASK_STATUS} ${ACTIVITY_SUB_TASK_CODE}
