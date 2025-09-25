@@ -24,7 +24,7 @@ case "$ACTION" in
     ;;
 esac
 
-echo "PRE_HOOK_CMD is: $PRE_HOOK_CMD"
+logInfoMessage "PRE_HOOK_CMD is: $PRE_HOOK_CMD"
 
 CODEBASE_LOCATION="${WORKSPACE}"/"${CODEBASE_DIR}"
 logInfoMessage "I'll $INSTRUCTION_TYPE the code available at [$CODEBASE_LOCATION]"
