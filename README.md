@@ -56,7 +56,7 @@ docker run --rm -it \
 
 > ⚠️ **Note:
 > If you run locally, you need to mention the value of INSTRUCTION_TYPE manually.
-> But when running from BuildPiper (BP), this value will be automatically read from the env_build file.**
+> But when running from BuildPiper (BP), this value will be automatically read from the environment_build file.**
 
 ## Code Mounting
 
