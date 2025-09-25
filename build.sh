@@ -12,8 +12,6 @@ if [ "$DEBUG" = true ]; then
   set -x
 fi
 
-ACTION=$1  
-
 case "$ACTION" in
   build)
     PRE_HOOK_CMD=$(getPreHookBuildCommand)
@@ -50,5 +48,3 @@ fi
 
 TASK_STATUS=$?
 saveTaskStatus ${TASK_STATUS} ${ACTIVITY_SUB_TASK_CODE}
-
-
