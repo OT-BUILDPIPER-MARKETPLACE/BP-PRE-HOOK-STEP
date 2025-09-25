@@ -20,11 +20,15 @@ function getBuildNumber() {
   echo "$BUILD_NUMBER"
 }
 
-function getPreHookCommand() {
+function getPreHookBuildCommand() {
   PRE_HOOK_CMD=$(jq -r '.pre_hooks[].command' < /bp/data/environment_build )
   echo "$PRE_HOOK_CMD"
 }
 
+function getPreHookDeployCommand() {
+  PRE_HOOK_CMD=$(jq -r '.pre_hooks[].command' < /bp/data/deploy_stateless_app )
+  echo "$PRE_HOOK_CMD"
+}
 
 function getRepositoryTag() {
   BUILD_REPOSITORY_TAG=$(jq -r .build_detail.repository.tag < /bp/data/environment_build )
