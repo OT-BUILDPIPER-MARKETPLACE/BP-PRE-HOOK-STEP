@@ -20,7 +20,7 @@ case "$ACTION" in
     PRE_HOOK_CMD=$(getPreHookDeployCommand)
     ;;
   *)
-    echo "Usage: $0 {build|deploy}"
+    echo "Usage: {build|deploy}"
     exit 1
     ;;
 esac
