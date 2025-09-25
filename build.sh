@@ -7,13 +7,27 @@ source /opt/buildpiper/shell-functions/str-functions.sh
 source /opt/buildpiper/shell-functions/file-functions.sh
 source /opt/buildpiper/shell-functions/aws-functions.sh
 
-# Enable Debugging if required
+
 if [ "$DEBUG" = true ]; then
   set -x
 fi
 
-export PRE_HOOK_CMD=$(getPreHookCommand)
+ACTION=$1  
 
+case "$ACTION" in
+  build)
+    PRE_HOOK_CMD=$(getPreHookBuildCommand)
+    ;;
+  deploy)
+    PRE_HOOK_CMD=$(getPreHookDeployCommand)
+    ;;
+  *)
+    echo "Usage: $0 {build|deploy}"
+    exit 1
+    ;;
+esac
+
+echo "PRE_HOOK_CMD is: $PRE_HOOK_CMD"
 
 CODEBASE_LOCATION="${WORKSPACE}"/"${CODEBASE_DIR}"
 logInfoMessage "I'll $INSTRUCTION_TYPE the code available at [$CODEBASE_LOCATION]"
