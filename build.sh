@@ -59,14 +59,13 @@ else
         eval "$clean_cmd"
         TASK_STATUS=$?
         if [ $TASK_STATUS -ne 0 ]; then
-          logErrorMessage "Command failed: $clean_cmd"
+          #break
           saveTaskStatus $TASK_STATUS ${ACTIVITY_SUB_TASK_CODE}
-          break
+          exit 1
         fi
       done
-    if [ "$ALL_SUCCESS" = true ]; then
-        saveTaskStatus 0 ${ACTIVITY_SUB_TASK_CODE}
-      fi
+      saveTaskStatus $TASK_STATUS ${ACTIVITY_SUB_TASK_CODE}
     fi
   done
 fi
+
