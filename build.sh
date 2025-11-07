@@ -51,6 +51,7 @@ else
       SAFE_CMD=$(echo "$SAFE_CMD" | sed -E 's/(export[[:space:]]+[^=]+=)[^ ]+/\1****/g')
       logInfoMessage "Running sanitized command: $SAFE_CMD"
       IFS=';&' read -ra parts <<< "$cmd"
+      ALL_SUCCESS=true
       for part in "${parts[@]}"; do
         clean_cmd=$(echo "$part" | xargs)
         [ -z "$clean_cmd" ] && continue
@@ -63,6 +64,9 @@ else
           break
         fi
       done
+    if [ "$ALL_SUCCESS" = true ]; then
+        saveTaskStatus 0 ${ACTIVITY_SUB_TASK_CODE}
+      fi
     fi
   done
 fi
