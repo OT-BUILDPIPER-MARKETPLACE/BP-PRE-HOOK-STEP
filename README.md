@@ -5,7 +5,7 @@ This Docker image runs the `build.sh` script to execute **pre-hook commands** in
 It is published to your private registry:
 
 ```
-registry.buildpiper.in/impl/pre-hooks:nr_v0.1
+registry.buildpiper.in/impl/pre-hooks:nr_v0.1 #use for buildpiper
 ```
 
 ---
@@ -16,10 +16,8 @@ From the directory containing the `Dockerfile`:
 
 ```bash
 # Build the image
-docker build -t registry.buildpiper.in/impl/pre-hooks:nr_v0.1 .
+docker build -t pre-hooks:nr_v0.1 .
 
-# Push to registry
-docker push registry.buildpiper.in/impl/pre-hooks:nr_v0.1
 ```
 
 ---
