@@ -47,19 +47,22 @@ if [ -z "$PRE_HOOK_CMD" ]; then
 else
   echo "$PRE_HOOK_CMD" | while IFS= read -r cmd; do
     if [ -n "$cmd" ]; then
-      # Mask command for logging
       SAFE_CMD=$(echo "$cmd" | sed -E 's/(AWS|DB|TOKEN|PASSWORD|SECRET|KEY)=([^ ]+)/\1=****/g')
       SAFE_CMD=$(echo "$SAFE_CMD" | sed -E 's/(export[[:space:]]+[^=]+=)[^ ]+/\1****/g')
       logInfoMessage "Running sanitized command: $SAFE_CMD"
-      set +x  
-      eval "$cmd" || logErrorMessage "Command failed: $cmd"
-      TASK_STATUS=$?
-      if [ "$DEBUG" = true ]; then set -x; fi
+      IFS=';&' read -ra parts <<< "$cmd"
+      for part in "${parts[@]}"; do
+        clean_cmd=$(echo "$part" | xargs)
+        [ -z "$clean_cmd" ] && continue
 
-      if [ "$STATUS" -ne 0 ]; then
-          logErrorMessage "Command failed: $SAFE_CMD"
-          saveTaskStatus ${TASK_STATUS} ${ACTIVITY_SUB_TASK_CODE}
-      fi
+        eval "$clean_cmd"
+        STATUS=$?
+        if [ $STATUS -ne 0 ]; then
+          logErrorMessage "Command failed: $clean_cmd"
+          saveTaskStatus $STATUS ${ACTIVITY_SUB_TASK_CODE}
+          break
+        fi
+      done
     fi
   done
 fi
