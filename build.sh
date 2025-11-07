@@ -24,6 +24,14 @@ case "$ACTION" in
     ;;
 esac
 
+# ------------------------------------------------------------------
+# SECURITY FIX: Avoid printing raw pre-hook commands that might
+# contain sensitive env vars like passwords or tokens.
+# ------------------------------------------------------------------
+MASKED_CMD="$PRE_HOOK_CMD"
+MASKED_CMD=$(echo "$MASKED_CMD" | sed -E 's/(AWS|DB|TOKEN|PASSWORD|SECRET|KEY)=([^ ]+)/\1=****/g')
+MASKED_CMD=$(echo "$MASKED_CMD" | sed -E 's/(export[[:space:]]+[^=]+=)[^ ]+/\1****/g')
+
 logInfoMessage "PRE_HOOK_CMD is: $PRE_HOOK_CMD"
 
 CODEBASE_LOCATION="${WORKSPACE}"/"${CODEBASE_DIR}"
@@ -35,15 +43,23 @@ cd "${CODEBASE_LOCATION}" || { logErrorMessage "Failed to change directory to $C
 #######################################################
 
 if [ -z "$PRE_HOOK_CMD" ]; then
-    logInfoMessage "No pre-hook commands found."
+  logInfoMessage "No pre-hook commands found."
 else
-    echo "$PRE_HOOK_CMD" | while IFS= read -r cmd; do
-        if [ -n "$cmd" ]; then
-            logInfoMessage "Running: $cmd"
-            eval "$cmd" || logErrorMessage "Command failed: $cmd (continuing...)"
-        fi
-    done
-fi
+  echo "$PRE_HOOK_CMD" | while IFS= read -r cmd; do
+    if [ -n "$cmd" ]; then
+      # Mask command for logging
+      SAFE_CMD=$(echo "$cmd" | sed -E 's/(AWS|DB|TOKEN|PASSWORD|SECRET|KEY)=([^ ]+)/\1=****/g')
+      SAFE_CMD=$(echo "$SAFE_CMD" | sed -E 's/(export[[:space:]]+[^=]+=)[^ ]+/\1****/g')
+      logInfoMessage "Running sanitized command: $SAFE_CMD"
+      set +x  
+      eval "$cmd"
+      TASK_STATUS=$?
+      if [ "$DEBUG" = true ]; then set -x; fi
 
-TASK_STATUS=$?
-saveTaskStatus ${TASK_STATUS} ${ACTIVITY_SUB_TASK_CODE}
+      if [ "$STATUS" -ne 0 ]; then
+          logErrorMessage "Command failed: $SAFE_CMD"
+          saveTaskStatus ${TASK_STATUS} ${ACTIVITY_SUB_TASK_CODE}
+      fi
+    fi
+  done
+fi
