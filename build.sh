@@ -59,7 +59,7 @@ else
         TASK_STATUS=$?
         if [ $TASK_STATUS -ne 0 ]; then
           logErrorMessage "Command failed: $clean_cmd"
-          saveTaskStatus $STATUS ${ACTIVITY_SUB_TASK_CODE}
+          saveTaskStatus $TASK_STATUS ${ACTIVITY_SUB_TASK_CODE}
           break
         fi
       done
