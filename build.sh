@@ -52,7 +52,7 @@ else
       SAFE_CMD=$(echo "$SAFE_CMD" | sed -E 's/(export[[:space:]]+[^=]+=)[^ ]+/\1****/g')
       logInfoMessage "Running sanitized command: $SAFE_CMD"
       set +x  
-      eval "$cmd"
+      eval "$cmd" || logErrorMessage "Command failed: $cmd"
       TASK_STATUS=$?
       if [ "$DEBUG" = true ]; then set -x; fi
 
