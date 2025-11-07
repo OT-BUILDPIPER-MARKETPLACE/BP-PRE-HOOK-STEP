@@ -56,8 +56,8 @@ else
         [ -z "$clean_cmd" ] && continue
 
         eval "$clean_cmd"
-        STATUS=$?
-        if [ $STATUS -ne 0 ]; then
+        TASK_STATUS=$?
+        if [ $TASK_STATUS -ne 0 ]; then
           logErrorMessage "Command failed: $clean_cmd"
           saveTaskStatus $STATUS ${ACTIVITY_SUB_TASK_CODE}
           break
