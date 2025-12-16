@@ -41,10 +41,10 @@ cd "${CODEBASE_LOCATION}" || { logErrorMessage "Failed to change directory to $C
 
 #######################################################
 
-if [ -z "$PRE_HOOK_CMD" ]; then
+if [ -z "$MASKED_CMD" ]; then
   logInfoMessage "No pre-hook commands found."
 else
-  echo "$PRE_HOOK_CMD" | while IFS= read -r cmd; do
+  echo "$MASKED_CMD" | while IFS= read -r cmd; do
     if [ -n "$cmd" ]; then
       SAFE_CMD=$(echo "$cmd" | sed -E 's/(AWS|DB|TOKEN|PASSWORD|SECRET|KEY)=([^ ]+)/\1=****/g')
       SAFE_CMD=$(echo "$SAFE_CMD" | sed -E 's/(export[[:space:]]+[^=]+=)[^ ]+/\1****/g')
