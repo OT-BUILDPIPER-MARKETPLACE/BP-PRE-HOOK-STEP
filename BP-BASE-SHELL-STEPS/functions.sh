@@ -65,5 +65,3 @@ function saveTaskStatus() {
       generateOutput "${ACTIVITY_SUB_TASK_CODE}" true "Please check ${ACTIVITY_SUB_TASK_CODE} failed!!!"
   fi
 }
-
-

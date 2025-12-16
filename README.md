@@ -5,7 +5,7 @@ This Docker image runs the `build.sh` script to execute **pre-hook commands** in
 It is published to your private registry:
 
 ```
-registry.buildpiper.in/impl/pre-hooks:nr_v0.1
+registry.buildpiper.in/impl/pre-hooks:nr_v0.1 #use for buildpiper
 ```
 
 ---
@@ -16,10 +16,8 @@ From the directory containing the `Dockerfile`:
 
 ```bash
 # Build the image
-docker build -t registry.buildpiper.in/impl/pre-hooks:nr_v0.1 .
+docker build -t pre-hooks:nr_v0.1 .
 
-# Push to registry
-docker push registry.buildpiper.in/impl/pre-hooks:nr_v0.1
 ```
 
 ---
@@ -91,11 +89,10 @@ docker run --rm -it \
 
 ## Workflow Example
 
-1. Build and push the image:
+1. Build the image:
 
    ```bash
    docker build -t registry.buildpiper.in/impl/pre-hooks:nr_v0.1 .
-   docker push registry.buildpiper.in/impl/pre-hooks:nr_v0.1
    ```
 
 2. Run with environment variables:
@@ -105,7 +102,8 @@ docker run --rm -it \
      -e DEBUG=true \
      -e WORKSPACE=/bp/workspace \
      -e CODEBASE_DIR=my-service \
-     -e PRE_HOOK_CMD=build \
+     -e PRE_HOOK_CMD="pwd && la" \
+     -e VALIDATION_FAILURE_ACTION=FAILURE \
      -v $(pwd):/bp/workspace \
      registry.buildpiper.in/impl/pre-hooks:nr_v0.1
    ```

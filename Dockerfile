@@ -1,4 +1,4 @@
-FROM aayush808/base-image-all-package-ub:0.2
+FROM registry.buildpiper.in/impl/generic-base-image:v0.1
 
 RUN groupadd -g 65522 buildpiper && \
     useradd -u 65522 -g buildpiper -d /home/buildpiper -m buildpiper && \
@@ -13,8 +13,6 @@ RUN mkdir -p \
         /bp/workspace && \
     chown -R buildpiper:buildpiper /src /bp /opt
 
-
-
 ENV SLEEP_DURATION=5s
 
 
@@ -26,11 +24,8 @@ RUN chmod +x /home/buildpiper/build.sh && \
     mkdir -p /home/buildpiper/reports && \
     chown -R buildpiper:buildpiper /home/buildpiper
 
-
 USER buildpiper
 
-
 WORKDIR /home/buildpiper
-
 
 ENTRYPOINT ["./build.sh"]
