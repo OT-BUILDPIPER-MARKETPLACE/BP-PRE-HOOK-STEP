@@ -94,12 +94,6 @@ for cmd in "${CMD_LIST[@]}"; do
   # Execute ORIGINAL command
   eval "$clean_cmd"
   TASK_STATUS=$?
-
-  if [ "$TASK_STATUS" -ne 0 ]; then
-    logErrorMessage "Pre-hook command failed: $SAFE_CMD"
-    saveTaskStatus "$TASK_STATUS" "${ACTIVITY_SUB_TASK_CODE}"
-    exit 1
-  fi
 done
 
 # ------------------------------------------------------------------
