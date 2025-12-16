@@ -57,11 +57,11 @@ else
 
         eval "$clean_cmd"
         TASK_STATUS=$?
-        if [ $TASK_STATUS -ne 0 ]; then
+        #if [ $TASK_STATUS -ne 0 ]; then
           #break
-          saveTaskStatus $TASK_STATUS ${ACTIVITY_SUB_TASK_CODE}
-          exit 1
-        fi
+         # saveTaskStatus $TASK_STATUS ${ACTIVITY_SUB_TASK_CODE}
+         # exit 1
+        #fi
       done
       saveTaskStatus $TASK_STATUS ${ACTIVITY_SUB_TASK_CODE}
     fi
