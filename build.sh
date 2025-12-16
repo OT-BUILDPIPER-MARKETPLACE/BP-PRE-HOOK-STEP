@@ -31,7 +31,7 @@ MASKED_CMD="$PRE_HOOK_CMD"
 MASKED_CMD=$(echo "$MASKED_CMD" | sed -E 's/(AWS|DB|TOKEN|PASSWORD|SECRET|KEY)=([^ ]+)/\1=****/g')
 MASKED_CMD=$(echo "$MASKED_CMD" | sed -E 's/(export[[:space:]]+[^=]+=)[^ ]+/\1****/g')
 
-logInfoMessage "PRE_HOOK_CMD is: $PRE_HOOK_CMD"
+logInfoMessage "PRE_HOOK_CMD is: $MASKED_CMD"
 
 CODEBASE_LOCATION="${WORKSPACE}"/"${CODEBASE_DIR}"
 logInfoMessage "I'll $INSTRUCTION_TYPE the code available at [$CODEBASE_LOCATION]"
