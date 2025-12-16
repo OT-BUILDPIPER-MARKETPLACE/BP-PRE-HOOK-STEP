@@ -65,8 +65,6 @@ echo "$PRE_HOOK_CMD" | while IFS= read -r cmd; do
       env | sed -E '
         s/(AWS|DB|TOKEN|PASSWORD|PASS|SECRET|KEY|CRED|AUTH|PRIVATE|FERNET|ACCESS|SESSION)=.*/\1=****/Ig
       '
-
-      #TASK_STATUS=0
       TASK_STATUS=$?
     else
       eval "$clean_cmd"
