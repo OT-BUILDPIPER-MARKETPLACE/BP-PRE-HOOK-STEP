@@ -1,103 +1,79 @@
 #!/bin/bash
 
-# ------------------------------------------------------------------
-# Source common BuildPiper functions
-# ------------------------------------------------------------------
 source /opt/buildpiper/shell-functions/functions.sh
 source /opt/buildpiper/shell-functions/log-functions.sh
 source /opt/buildpiper/shell-functions/str-functions.sh
 source /opt/buildpiper/shell-functions/file-functions.sh
 source /opt/buildpiper/shell-functions/aws-functions.sh
 
-# ------------------------------------------------------------------
-# Enable debug if required
-# ------------------------------------------------------------------
+
 if [ "$DEBUG" = true ]; then
   set -x
 fi
 
-# ------------------------------------------------------------------
-# Resolve PRE_HOOK_CMD based on ACTION
-# ------------------------------------------------------------------
+
 case "$ACTION" in
   build)
-    PRE_HOOK_CMD="$(getPreHookBuildCommand)"
+    PRE_HOOK_CMD=$(getPreHookBuildCommand)
     ;;
   deploy)
-    PRE_HOOK_CMD="$(getPreHookDeployCommand)"
+    PRE_HOOK_CMD=$(getPreHookDeployCommand)
     ;;
   *)
-    logErrorMessage "Invalid ACTION. Allowed values: build | deploy"
+    logInfoMessage "Usage: ACTION must be {build|deploy}"
     exit 1
     ;;
 esac
 
-# ------------------------------------------------------------------
-# Mask command ONLY for logging (never for execution)
-# ------------------------------------------------------------------
-MASKED_CMD="$(echo "$PRE_HOOK_CMD" | sed -E \
-  -e 's/(AWS|DB|TOKEN|PASSWORD|SECRET|KEY)=([^[:space:]]+)/\1=****/g' \
-  -e 's/(export[[:space:]]+[^=]+=)[^[:space:]]+/\1****/g'
-)"
+MASKED_CMD="$PRE_HOOK_CMD"
+MASKED_CMD=$(echo "$MASKED_CMD" | sed -E 's/(AWS|DB|TOKEN|PASSWORD|PASS|SECRET|KEY|CRED|AUTH|PRIVATE|FERNET|ACCESS|SESSION)=([^ ]+)/\1=****/Ig')
+MASKED_CMD=$(echo "$MASKED_CMD" | sed -E 's/(export[[:space:]]+[^=]+=)[^ ]+/\1****/Ig')
 
-logInfoMessage "PRE_HOOK_CMD (masked): $MASKED_CMD"
+logInfoMessage "PRE_HOOK_CMD is: $MASKED_CMD"
 
-# ------------------------------------------------------------------
-# Move to codebase directory
-# ------------------------------------------------------------------
+
 CODEBASE_LOCATION="${WORKSPACE}/${CODEBASE_DIR}"
-logInfoMessage "I'll ${INSTRUCTION_TYPE:-process} the code available at [$CODEBASE_LOCATION]"
-sleep "${SLEEP_DURATION:-0}"
+logInfoMessage "I'll ${INSTRUCTION_TYPE} the code available at [$CODEBASE_LOCATION]"
+sleep "${SLEEP_DURATION}"
 
-cd "$CODEBASE_LOCATION" || {
+cd "${CODEBASE_LOCATION}" || {
   logErrorMessage "Failed to change directory to $CODEBASE_LOCATION"
-  saveTaskStatus 1 "${ACTIVITY_SUB_TASK_CODE}"
   exit 1
 }
 
-# ------------------------------------------------------------------
-# Block dangerous commands (SECURITY)
-# ------------------------------------------------------------------
-BLOCKED_CMDS_REGEX='^(env|printenv|set|declare|export|cat[[:space:]]+/proc/self/environ)$'
 
-# ------------------------------------------------------------------
-# Execute pre-hook commands
-# ------------------------------------------------------------------
-if [ -z "$PRE_HOOK_CMD" ]; then
-  logInfoMessage "No pre-hook commands found. Skipping pre-hook execution."
-  saveTaskStatus 0 "${ACTIVITY_SUB_TASK_CODE}"
-  exit 0
-fi
+echo "$PRE_HOOK_CMD" | while IFS= read -r cmd; do
+  [ -z "$cmd" ] && continue
 
-# Read commands line-by-line WITHOUT subshell
-IFS=$'\n' read -rd '' -a CMD_LIST <<< "$PRE_HOOK_CMD"
+  # Mask command for logging
+  SAFE_LOG_CMD=$(echo "$cmd" | sed -E 's/(AWS|DB|TOKEN|PASSWORD|PASS|SECRET|KEY|CRED|AUTH|PRIVATE|FERNET|ACCESS|SESSION)=([^ ]+)/\1=****/Ig')
+  SAFE_LOG_CMD=$(echo "$SAFE_LOG_CMD" | sed -E 's/(export[[:space:]]+[^=]+=)[^ ]+/\1****/Ig')
 
-for cmd in "${CMD_LIST[@]}"; do
-  clean_cmd="$(echo "$cmd" | xargs)"
-  [ -z "$clean_cmd" ] && continue
+  logInfoMessage "Running sanitized command: $SAFE_LOG_CMD"
 
-  # 🚫 Block unsafe commands
-  if [[ "$clean_cmd" =~ $BLOCKED_CMDS_REGEX ]]; then
-    logErrorMessage "Blocked unsafe pre-hook command: $clean_cmd"
-    saveTaskStatus 1 "${ACTIVITY_SUB_TASK_CODE}"
-    exit 1
-  fi
 
-  # Mask for logging only
-  SAFE_CMD="$(echo "$clean_cmd" | sed -E \
-    -e 's/(AWS|DB|TOKEN|PASSWORD|SECRET|KEY)=([^[:space:]]+)/\1=****/g' \
-    -e 's/(export[[:space:]]+[^=]+=)[^[:space:]]+/\1****/g'
-  )"
+  IFS=';&' read -ra CMD_PARTS <<< "$cmd"
 
-  logInfoMessage "Running sanitized command: $SAFE_CMD"
+  for part in "${CMD_PARTS[@]}"; do
+    clean_cmd=$(echo "$part" | xargs)
+    [ -z "$clean_cmd" ] && continue
 
-  # Execute ORIGINAL command
-  eval "$clean_cmd"
-  TASK_STATUS=$?
+
+    if [[ "$clean_cmd" == "env" ]]; then
+      logInfoMessage "Executing env with sensitive variables masked"
+
+      env | sed -E '
+        s/(AWS|DB|TOKEN|PASSWORD|PASS|SECRET|KEY|CRED|AUTH|PRIVATE|FERNET|ACCESS|SESSION)=.*/\1=****/Ig
+      '
+
+      #TASK_STATUS=0
+      TASK_STATUS=$?
+    else
+      eval "$clean_cmd"
+      TASK_STATUS=$?
+    fi
+  done
+  saveTaskStatus "${TASK_STATUS}" "${ACTIVITY_SUB_TASK_CODE}"
 done
 
-# ------------------------------------------------------------------
-# Success
-# ------------------------------------------------------------------
-saveTaskStatus $TASK_STATUS ${ACTIVITY_SUB_TASK_CODE}
 
