@@ -99,6 +99,5 @@ done
 # ------------------------------------------------------------------
 # Success
 # ------------------------------------------------------------------
-saveTaskStatus 0 "${ACTIVITY_SUB_TASK_CODE}"
-logInfoMessage "Congratulations ${ACTIVITY_SUB_TASK_CODE} succeeded!!!"
-exit 0
+saveTaskStatus $TASK_STATUS ${ACTIVITY_SUB_TASK_CODE}
+
