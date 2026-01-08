@@ -15,9 +15,11 @@ fi
 case "$ACTION" in
   build)
     PRE_HOOK_CMD=$(getPreHookBuildCommand)
+    logInfoMessage "Selected action: $ACTION"
     ;;
   deploy)
     PRE_HOOK_CMD=$(getPreHookDeployCommand)
+    logInfoMessage "Selected action: $ACTION"
     ;;
   *)
     logInfoMessage "Usage: ACTION must be {build|deploy}"
