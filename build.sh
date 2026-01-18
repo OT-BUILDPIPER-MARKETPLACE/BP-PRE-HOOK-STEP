@@ -29,7 +29,7 @@ esac
 
 if [ -z "$PRE_HOOK_CMD" ]; then
   logInfoMessage "No PRE_HOOKS found"
-  exit 1
+  exit 0
 fi
 
 MASKED_CMD="$PRE_HOOK_CMD"
