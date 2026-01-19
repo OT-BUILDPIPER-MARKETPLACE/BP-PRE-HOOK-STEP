@@ -27,6 +27,11 @@ case "$ACTION" in
     ;;
 esac
 
+if [ -z "$PRE_HOOK_CMD" ]; then
+  logInfoMessage "No PRE_HOOKS found"
+  exit 0
+fi
+
 MASKED_CMD="$PRE_HOOK_CMD"
 MASKED_CMD=$(echo "$MASKED_CMD" | sed -E 's/(AWS|DB|TOKEN|PASSWORD|PASS|SECRET|KEY|CRED|AUTH|PRIVATE|FERNET|ACCESS|SESSION)=([^ ]+)/\1=****/Ig')
 MASKED_CMD=$(echo "$MASKED_CMD" | sed -E 's/(export[[:space:]]+[^=]+=)[^ ]+/\1****/Ig')
@@ -75,5 +80,3 @@ echo "$PRE_HOOK_CMD" | while IFS= read -r cmd; do
   done
   saveTaskStatus "${TASK_STATUS}" "${ACTIVITY_SUB_TASK_CODE}"
 done
-
-
