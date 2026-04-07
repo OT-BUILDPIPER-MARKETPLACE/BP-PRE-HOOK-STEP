@@ -31,7 +31,7 @@ init_file() {
         mkdir -p "$OUTPUT_DIR"
         echo '{"events": {}}' > "$FILE"
   fi
-
+}
 add_event() {
     EXECUTION_DIR="/bp/execution_dir"
     OUTPUT_DIR="${EXECUTION_DIR}/${EXECUTION_TASK_ID}"
