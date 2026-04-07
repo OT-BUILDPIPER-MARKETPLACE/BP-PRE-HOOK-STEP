@@ -1,7 +1,7 @@
 #!/bin/bash
 
 generateOutput() {
-    ACTIVITY_SUB_TASK_CODE="$1"
+      ACTIVITY_SUB_TASK_CODE="$1"
     Status="$2"
     Message="$3"
 
@@ -18,7 +18,7 @@ generateOutput() {
     [[ "$file_content" != "["* ]] && file_content="[$file_content]"
     updated_content=$(jq -c ". += [{ \"$ACTIVITY_SUB_TASK_CODE\": { \"status\": \"$Status\", \"message\": \"$Message\" } }]" <<< "$file_content")
     echo "$updated_content" | jq "." > "$file_name"
-    echo "{ \"$ACTIVITY_SUB_TASK_CODE\": { \"status\": \"$Status\", \"message\": \"$Message\" } }" | jq "." > "${OUTPUT_DIR}/${ACTIVITY_SUB_TASK_CODE}.json"
+ #   echo "{ \"$ACTIVITY_SUB_TASK_CODE\": { \"status\": \"$Status\", \"message\": \"$Message\" } }" | jq "." > "${OUTPUT_DIR}/${ACTIVITY_SUB_TASK_CODE}.json"
     echo "Job step response updated in: $file_name"
   }
 
