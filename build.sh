@@ -6,11 +6,9 @@ source /opt/buildpiper/shell-functions/str-functions.sh
 source /opt/buildpiper/shell-functions/file-functions.sh
 source /opt/buildpiper/shell-functions/aws-functions.sh
 
-
 if [ "$DEBUG" = true ]; then
   set -x
 fi
-
 
 case "$ACTION" in
   build)
@@ -38,8 +36,8 @@ esac
 
 if [ -z "$PRE_HOOK_CMD" ]; then
   logInfoMessage "No PRE_HOOKS found"
-  add_event "PRE HOOK COMMAND CHECK" "Successful" \
-    "No PRE_HOOK command found, skipping execution" \
+  add_event "PRE HOOK COMMAND VALIDATION" "Successful" \
+    "No PRE_HOOK command configured, skipping execution" \
     "Action: ${ACTION}"
   exit 0
 fi
@@ -50,7 +48,7 @@ MASKED_CMD=$(echo "$MASKED_CMD" | sed -E 's/(export[[:space:]]+[^=]+=)[^ ]+/\1**
 
 logInfoMessage "PRE_HOOK_CMD is: $MASKED_CMD"
 
-add_event "PRE HOOK COMMAND CHECK" "Successful" \
+add_event "PRE HOOK COMMAND VALIDATION" "Successful" \
   "PRE_HOOK command resolved and masked for logging" \
   "Command (masked): ${MASKED_CMD}"
 
@@ -60,15 +58,8 @@ sleep "${SLEEP_DURATION}"
 
 cd "${CODEBASE_LOCATION}" || {
   logErrorMessage "Failed to change directory to $CODEBASE_LOCATION"
-  add_event "PRE HOOK DIRECTORY CHANGE" "Failed" \
-    "Failed to navigate to codebase directory" \
-    "Target Directory: ${CODEBASE_LOCATION}"
   exit 1
 }
-
-add_event "PRE HOOK DIRECTORY CHANGE" "Successful" \
-  "Successfully navigated to codebase directory" \
-  "Target Directory: ${CODEBASE_LOCATION}"
 
 echo "$PRE_HOOK_CMD" | while IFS= read -r cmd; do
   [ -z "$cmd" ] && continue
@@ -78,10 +69,6 @@ echo "$PRE_HOOK_CMD" | while IFS= read -r cmd; do
   SAFE_LOG_CMD=$(echo "$SAFE_LOG_CMD" | sed -E 's/(export[[:space:]]+[^=]+=)[^ ]+/\1****/Ig')
 
   logInfoMessage "Running sanitized command: $SAFE_LOG_CMD"
-
-  add_event "PRE HOOK COMMAND EXECUTION START" "Successful" \
-    "Initiating command execution" \
-    "Command (masked): ${SAFE_LOG_CMD}"
 
   IFS=';&' read -ra CMD_PARTS <<< "$cmd"
 
@@ -104,24 +91,24 @@ echo "$PRE_HOOK_CMD" | while IFS= read -r cmd; do
 
     if [ "${TASK_STATUS}" -eq 0 ]; then
       add_event "PRE HOOK SUB-COMMAND RESULT" "Successful" \
-        "Sub-command executed successfully" \
+        "Command executed successfully: ${SAFE_LOG_CMD}" \
         "Exit Code: ${TASK_STATUS}"
     else
       add_event "PRE HOOK SUB-COMMAND RESULT" "Failed" \
-        "Sub-command execution failed" \
-        "Exit Code: ${TASK_STATUS}"
+        "Command failed: ${SAFE_LOG_CMD}" \
+        "Exit Code: ${TASK_STATUS} | Hint: Check command syntax or dependencies"
     fi
   done
 
   saveTaskStatus "${TASK_STATUS}" "${ACTIVITY_SUB_TASK_CODE}"
 
   if [ "${TASK_STATUS}" -eq 0 ]; then
-    add_event "PRE HOOK TASK STATUS" "Successful" \
-      "Task status saved successfully" \
-      "Sub Task Code: ${ACTIVITY_SUB_TASK_CODE} | Exit Code: ${TASK_STATUS}"
+  add_event "PRE HOOK TASK STATUS" "Successful" \
+    "Pre-hook completed successfully for sub-task" \
+    "Sub Task Code: ${ACTIVITY_SUB_TASK_CODE} | Final Exit Code: ${TASK_STATUS}"
   else
     add_event "PRE HOOK TASK STATUS" "Failed" \
-      "Task completed with non-zero exit status" \
-      "Sub Task Code: ${ACTIVITY_SUB_TASK_CODE} | Exit Code: ${TASK_STATUS}"
+      "Pre-hook failed during execution. Review failed command logs above." \
+      "Sub Task Code: ${ACTIVITY_SUB_TASK_CODE} | Final Exit Code: ${TASK_STATUS}"
   fi
 done
