@@ -15,22 +15,15 @@ fi
 case "$ACTION" in
   build)
     PRE_HOOK_CMD=$(getPreHookBuildCommand)
-    logInfoMessage "Selected action: $ACTION"
     ;;
   deploy)
     PRE_HOOK_CMD=$(getPreHookDeployCommand)
-    logInfoMessage "Selected action: $ACTION"
     ;;
   *)
     logInfoMessage "Usage: ACTION must be {build|deploy}"
     exit 1
     ;;
 esac
-
-if [ -z "$PRE_HOOK_CMD" ]; then
-  logInfoMessage "No PRE_HOOKS found"
-  exit 0
-fi
 
 MASKED_CMD="$PRE_HOOK_CMD"
 MASKED_CMD=$(echo "$MASKED_CMD" | sed -E 's/(AWS|DB|TOKEN|PASSWORD|PASS|SECRET|KEY|CRED|AUTH|PRIVATE|FERNET|ACCESS|SESSION)=([^ ]+)/\1=****/Ig')
@@ -59,10 +52,10 @@ echo "$PRE_HOOK_CMD" | while IFS= read -r cmd; do
   logInfoMessage "Running sanitized command: $SAFE_LOG_CMD"
 
 
-  IFS=';&' read -ra CMD_PARTS <<< "$cmd"
+  IFS=';' read -ra CMD_PARTS <<< "$cmd"
 
   for part in "${CMD_PARTS[@]}"; do
-    clean_cmd=$(echo "$part" | xargs)
+    clean_cmd=$(echo "$part")
     [ -z "$clean_cmd" ] && continue
 
 
@@ -80,3 +73,7 @@ echo "$PRE_HOOK_CMD" | while IFS= read -r cmd; do
   done
   saveTaskStatus "${TASK_STATUS}" "${ACTIVITY_SUB_TASK_CODE}"
 done
+
+
+
+### this tag create for shiprocket only 
