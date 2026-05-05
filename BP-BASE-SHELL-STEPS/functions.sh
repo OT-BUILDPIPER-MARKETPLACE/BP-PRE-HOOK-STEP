@@ -1,7 +1,7 @@
 #!/bin/bash
 
 generateOutput() {
-      ACTIVITY_SUB_TASK_CODE="$1"
+    ACTIVITY_SUB_TASK_CODE="$1"
     Status="$2"
     Message="$3"
 
