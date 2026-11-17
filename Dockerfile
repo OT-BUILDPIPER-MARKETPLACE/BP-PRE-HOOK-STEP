@@ -1,4 +1,4 @@
-FROM registry.buildpiper.in/impl/generic-base-image:v0.1
+FROM registry.buildpiper.in/impl/generic-base-image:v0.1-multi-arch
 
 RUN groupadd -g 65522 buildpiper && \
     useradd -u 65522 -g buildpiper -d /home/buildpiper -m buildpiper && \
