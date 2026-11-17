@@ -73,7 +73,3 @@ echo "$PRE_HOOK_CMD" | while IFS= read -r cmd; do
   done
   saveTaskStatus "${TASK_STATUS}" "${ACTIVITY_SUB_TASK_CODE}"
 done
-
-
-
-### this tag create for shiprocket only 
