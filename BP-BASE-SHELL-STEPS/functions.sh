@@ -22,22 +22,22 @@ function getBuildNumber() {
 
 
 function getPreHookBuildCommand() {
-  PRE_HOOK_CMD=$(jq -r '.pre_hooks[].command' < /bp/data/environment_build )
+  PRE_HOOK_CMD=$(jq -r '.pre_hooks | sort_by(.order) | .[].command' < /bp/data/environment_build )
   echo "$PRE_HOOK_CMD"
 }
 
 function getPreHookDeployCommand() {
-  PRE_HOOK_CMD=$(jq -r '.pre_hooks[].command' < /bp/data/deploy_stateless_app )
+  PRE_HOOK_CMD=$(jq -r '.pre_hooks | sort_by(.order) | .[].command' < /bp/data/deploy_stateless_app )
   echo "$PRE_HOOK_CMD"
 }
 
 function getPostHookBuildCommand() {
-  POST_HOOK_CMD=$(jq -r '.post_hooks[].command' < /bp/data/environment_build )
+  POST_HOOK_CMD=$(jq -r '.post_hooks | sort_by(.order) | .[].command' < /bp/data/environment_build )
   echo "$POST_HOOK_CMD"
 }
 
 function getPostHookDeployCommand() {
-  POST_HOOK_CMD=$(jq -r '.post_hooks[].command' < /bp/data/deploy_stateless_app )
+  POST_HOOK_CMD=$(jq -r '.post_hooks | sort_by(.order) | .[].command' < /bp/data/deploy_stateless_app )
   echo "$POST_HOOK_CMD"
 }
 
