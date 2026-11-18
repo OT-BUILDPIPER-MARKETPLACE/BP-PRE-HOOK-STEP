@@ -42,6 +42,17 @@ function getPostHookDeployCommand() {
 }
 
 
+function getPreHookNMSBuildCommand() {
+    PRE_HOOK_CMD=$(jq -r ‘.other_build_details.pre_hook[] | select(.method == “Prehook Command”) | .command’ /bp/data/non_ms_build)
+    echo “$PRE_HOOK_CMD”
+}
+
+function getPostHookNMSBuildCommand() {
+    POST_HOOK_CMD=$(jq -r ‘.other_build_details.post_hook[] | select(.method == “Posthook Command”) | .command’ /bp/data/non_ms_build)
+    echo “$POST_HOOK_CMD”
+}
+
+
 function getRepositoryTag() {
   BUILD_REPOSITORY_TAG=$(jq -r .build_detail.repository.tag < /bp/data/environment_build )
   echo "$BUILD_REPOSITORY_TAG"
